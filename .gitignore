@@ -17,3 +17,4 @@ bcm2835-*/config.h
 bcm2835-*/build
 libserialport/build
 libusbgx/build
+*~
