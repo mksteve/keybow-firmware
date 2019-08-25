@@ -1,0 +1,4 @@
+#!/bin/bash
+/opt/keybow/lightstest2  0    0   0     0   0   0      0   0   0
+/opt/keybow/lightstest2 255 255 255   255 255 255    255 255 255
+/opt/keybow/lightstest2 255   0   0   219 123  43      0 255   0
