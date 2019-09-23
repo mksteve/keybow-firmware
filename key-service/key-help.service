@@ -7,8 +7,9 @@ ExecStart=/opt/keybow/key-colors
 WorkingDirectory=/opt/keybow
 StandardOutput=inherit
 StandardError=inherit
-Restart=always
-User=pi
+Restart=no
+RemainAfterExit=yes
+Type=oneshot
 
 [Install]
 WantedBy=multi-user.target

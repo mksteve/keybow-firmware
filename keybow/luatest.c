@@ -5,6 +5,8 @@
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
+#include <unistd.h>
+
 
 lua_State* L;
 
@@ -52,10 +54,10 @@ int luaHandleKey(unsigned short key_index) {
         lua_pushnumber(L, 0); // Index
         lua_pushnumber(L, 69); // State
         if (lua_pcall(L, 2, 1, 0) != 0){
-            error(L, "error running function `handle_key`: %s", lua_tostring(L, -1));
+            luaL_error(L, "error running function `handle_key`: %s", lua_tostring(L, -1));
         }
         if (!lua_isnumber(L, -1)){
-            error(L, "function `handle_key` must return a number");
+            luaL_error(L, "function `handle_key` must return a number");
         }
         int result = lua_tonumber(L, -1);
         lua_pop(L, 1);

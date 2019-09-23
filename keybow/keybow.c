@@ -23,7 +23,7 @@ int midi_output;
 int running = 0;
 int key_index = 0;
 
-pthread_t t_run_lights;
+keybow_thread t_run_lights = {0};
 
 void signal_handler(int dummy) {
     running = 0;
@@ -86,19 +86,31 @@ int updateKeys() {
 }
 
 void *run_lights(void *void_ptr){
-    while(running){
-        int delta = (millis() / (1000/60)) % height;
-        if (lights_auto) {
-            pthread_mutex_lock( &lights_mutex );
-            lights_drawPngFrame(delta);
-            pthread_mutex_unlock( &lights_mutex );
-        }
-        lights_show();
+    while(running && t_run_lights.mStop == 0){
+	if( height ){
+	    int delta = (millis() / (1000/60)) % height;
+	    if (lights_auto) {
+		pthread_mutex_lock( &lights_mutex );
+		lights_drawPngFrame(delta);
+		pthread_mutex_unlock( &lights_mutex );
+	    }
+	    lights_show();
+	}
         usleep(16666); // About 60fps
     }
     return NULL;
 }
 
+void stopLights()
+{
+    if( t_run_lights.mCreated ){
+	t_run_lights.mStop = 1;
+	pthread_join( t_run_lights.mThread, NULL );
+	t_run_lights.mCreated = 0;
+    }
+    t_run_lights.mStop    = 0;
+
+}
 int main() {
     int ret;
     chdir(KEYBOW_HOME);
@@ -180,11 +192,6 @@ int main() {
 
     luaCallSetup();
 
-    if(pthread_create(&t_run_lights, NULL, run_lights, NULL)) {
-        printf("Error creating lighting thread.\n");
-        return 1;
-    }
-
     while (running){
         /*int delta = (millis() / (1000/60)) % height;
         if (lights_auto) {
@@ -197,7 +204,7 @@ int main() {
         //usleep(250000);
     }      
 
-    pthread_join(t_run_lights, NULL);
+    stopLights();
 
     printf("Closing LUA\n");
     luaClose();

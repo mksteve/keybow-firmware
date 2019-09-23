@@ -28,3 +28,12 @@ keybow_key get_key(unsigned short index);
 int initUSB();
 int initGPIO();
 int main();
+typedef struct _keybow_thread {
+  int       mCreated;
+  int       mStop;
+  pthread_t mThread;
+} keybow_thread;
+
+extern keybow_thread t_run_lights;
+void stopLights();
+

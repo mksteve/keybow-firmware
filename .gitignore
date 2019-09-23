@@ -5,6 +5,7 @@ autom4te.cache/
 .deps/
 keybow/keybow
 keybow/keybow-test
+keybow/lightstest2
 lua*/src/lua
 lua*/src/luac
 bcm2835-*/Makefile
@@ -18,3 +19,4 @@ bcm2835-*/build
 libserialport/build
 libusbgx/build
 *~
+TAGS

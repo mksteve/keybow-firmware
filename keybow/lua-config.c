@@ -165,7 +165,9 @@ static int l_serial_read(lua_State *L) {
     //free(data);
     return 1;
 }
-
+static int l_show_lights( lua_State *L) {
+  lights_show();
+}
 static int l_serial_write(lua_State *L) {
     int nargs = lua_gettop(L);
 
@@ -328,6 +330,19 @@ static int l_set_pixel(lua_State *L) {
     return 0;
 }
 
+static int l_set_pixel_raw(lua_State *L) {
+    int nargs = lua_gettop(L);
+    unsigned short x = luaL_checknumber(L, 1);
+    unsigned short r = luaL_checknumber(L, 2);
+    unsigned short g = luaL_checknumber(L, 3);
+    unsigned short b = luaL_checknumber(L, 4);
+    lua_pop(L, nargs);
+
+    lights_setPixel(x, r, g, b);
+    return 0;
+}
+
+
 static int l_set_key(lua_State *L) {
     int nargs = lua_gettop(L);
     unsigned short hid_code = luaL_checknumber(L, 1);
@@ -380,6 +395,18 @@ static int l_get_millis(lua_State *L) {
     return 1;
 }
 
+static int l_start_auto_lights( lua_State *L) {
+    stopLights();
+    if(pthread_create(&t_run_lights.mThread, NULL, run_lights, NULL)) {
+	printf("Error creating lighting thread.\n");
+	return 0;
+    } else {
+	t_run_lights.mCreated = 1;
+    }
+    lua_pushboolean( L , 1 );
+    return 1;
+}
+
 int initLUA() {
     modifiers = 0;
 
@@ -388,13 +415,20 @@ int initLUA() {
 
     lua_pushcfunction(L, l_set_pixel);
     lua_setglobal(L, "keybow_set_pixel");
-
+    
+    lua_pushcfunction(L, l_set_pixel_raw);
+    lua_setglobal(L, "keybow_set_pixel_raw");
+    
     lua_pushcfunction(L, l_auto_lights);
     lua_setglobal(L, "keybow_auto_lights");
 
     lua_pushcfunction(L, l_clear_lights);
     lua_setglobal(L, "keybow_clear_lights");
 
+    lua_pushcfunction(L, l_show_lights);
+    lua_setglobal(L, "keybow_show_lights");
+
+    
     lua_pushcfunction(L, l_load_pattern);
     lua_setglobal(L, "keybow_load_pattern");
 
