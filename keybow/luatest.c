@@ -25,7 +25,7 @@ static int l_release_key (lua_State *L) {
 }
 
 
-int initLUA() {
+int initLUA( const char *script) {
     L = luaL_newstate();
     luaL_openlibs(L);
 
@@ -36,10 +36,10 @@ int initLUA() {
     lua_setglobal(L, "release_key");
 
     int status;
-    status = luaL_loadfile(L, "keys.lua");
+    status = luaL_loadfile(L, script );
     if(status) {
-        printf("Couldn't load keys.lua: %s\n", lua_tostring(L, -1));
-        return 1;
+      printf("Couldn't load %s: %s\n", script, lua_tostring(L, -1));
+      return 1;
     }
     status = lua_pcall(L, 0, LUA_MULTRET, 0);
     return 0;
@@ -72,7 +72,7 @@ int luaHandleKey(unsigned short key_index) {
 int main() {
     int ret;
 
-    ret = initLUA();
+    ret = initLUA("keys.lua");
     if (ret != 0){
         return ret;
     }

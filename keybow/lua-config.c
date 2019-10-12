@@ -407,11 +407,14 @@ static int l_start_auto_lights( lua_State *L) {
     return 1;
 }
 
-int initLUA() {
+int initLUA( const char * script) {
     modifiers = 0;
 
     L = luaL_newstate();
     luaL_openlibs(L);
+
+    lua_pushstring( L, KEYBOW_HOME );
+    lua_setglobal( L, "KEYBOW_HOME" );
 
     lua_pushcfunction(L, l_set_pixel);
     lua_setglobal(L, "keybow_set_pixel");
@@ -469,9 +472,9 @@ int initLUA() {
     lua_setglobal(L, "keybow_serial_read");
   
     int status;
-    status = luaL_loadfile(L, "keys.lua");
+    status = luaL_loadfile(L, script );
     if(status) {
-        printf("Couldn't load keys.lua: %s\n", lua_tostring(L, -1));
+      printf("Couldn't load %s: %s\n", script, lua_tostring(L, -1));
         return 1;
     }
     status = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -506,7 +509,7 @@ int luaHandleKey(unsigned short key_index, unsigned short key_state) {
     if(lua_isfunction(L, lua_gettop(L))){
         lua_pushboolean(L, key_state); // State
         if (lua_pcall(L, 1, 0, 0) != 0){
-            printf("Error running function `handle_key`: %s", lua_tostring(L, -1));
+            printf("Error running function `handle_key`: %s\n", lua_tostring(L, -1));
         }
     } else {
         printf("handle_key_%02d is not defined!\n", key_index);
@@ -519,7 +522,11 @@ void luaTick(void){
     if (has_tick == 0){return;}
     lua_getglobal(L, "tick");
     lua_pushnumber(L, millis()-tick_start);
-    lua_pcall(L, 1, 0, 0);
+
+
+    if( lua_pcall(L, 1, 0, 0) != LUA_OK ){
+      printf("Error running function `tick`: %s", lua_tostring(L, -1));
+    }
 }
 
 void luaClose(void){

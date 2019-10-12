@@ -111,8 +111,24 @@ void stopLights()
     t_run_lights.mStop    = 0;
 
 }
-int main() {
+char keybow_home_value[ 1024] = "/boot/";
+char keybow_script[1024] = "keys.lua";
+
+int main( int argc, char * argv[] ) {
     int ret;
+    int i;
+    for( i = 1; i < argc; i++){
+      if( strcmp( argv[i], "--home" ) == 0 && i < argc -1 ){
+	strcpy( keybow_home_value, argv[i+1]);
+	i++;
+	continue;
+      }
+      if( strcmp( argv[i], "--script" ) == 0 && i < argc -1 ){
+	strcpy( keybow_script, argv[i+1]);
+	i++;
+	continue;
+      }
+    }
     chdir(KEYBOW_HOME);
 
     pthread_mutex_init ( &lights_mutex, NULL );
@@ -166,7 +182,7 @@ int main() {
     printf("Initializing LUA\n");
 #endif
 
-    ret = initLUA();
+    ret = initLUA(keybow_script);
     if (ret != 0){
         return ret;
     }

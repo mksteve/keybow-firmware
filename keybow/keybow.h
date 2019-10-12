@@ -5,8 +5,9 @@
 
 #define NUM_KEYS 12
 
+extern char keybow_home_value[ 1024];
 #ifndef KEYBOW_HOME
-#define KEYBOW_HOME "/boot/"
+#define KEYBOW_HOME keybow_home_value
 #endif
 
 pthread_mutex_t lights_mutex;
