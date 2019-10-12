@@ -16,7 +16,16 @@ bcm2835-*/doc/doxyfile.stamp
 bcm2835-*/doc/html/
 bcm2835-*/config.h
 bcm2835-*/build
+bcm2835-*/INSTALL
+bcm2835-*/config.log
+bcm2835-*/config.status
+bcm2835-*/depcomp
+bcm2835-*/install-sh
+bcm2835-*/missing
+bcm2835-*/src/.deps/*
 libserialport/build
 libusbgx/build
+libusbgx/libusbgx.pc
+libusbgx/m4/*
 *~
 TAGS
