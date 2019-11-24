@@ -1,6 +1,9 @@
 require "keybow"
 require "layouts/default" -- Numberpad
 
+function setup()
+   keybow_start_auto_lights()
+end
 -- Custom layouts (uncomment to enable) --
 
 -- require "layouts/boilerplate" -- Handy bits of boilerplate text like Lorem Ipsum

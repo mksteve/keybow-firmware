@@ -396,7 +396,13 @@ static int l_get_millis(lua_State *L) {
 }
 
 static int l_start_auto_lights( lua_State *L) {
+#ifdef KEYBOW_DEBUG
+    printf( "Stopping lights\n" );
+#endif
     stopLights();
+#ifdef KEYBOW_DEBUG
+    printf( "starting lights\n" );
+#endif
     if(pthread_create(&t_run_lights.mThread, NULL, run_lights, NULL)) {
 	printf("Error creating lighting thread.\n");
 	return 0;
@@ -428,6 +434,9 @@ int initLUA( const char * script) {
     lua_pushcfunction(L, l_clear_lights);
     lua_setglobal(L, "keybow_clear_lights");
 
+    lua_pushcfunction(L, l_start_auto_lights);
+    lua_setglobal(L, "keybow_start_auto_lights");
+    
     lua_pushcfunction(L, l_show_lights);
     lua_setglobal(L, "keybow_show_lights");
 
@@ -525,7 +534,7 @@ void luaTick(void){
 
 
     if( lua_pcall(L, 1, 0, 0) != LUA_OK ){
-      printf("Error running function `tick`: %s", lua_tostring(L, -1));
+      printf("Error running function `tick`: %s\n", lua_tostring(L, -1));
     }
 }
 
